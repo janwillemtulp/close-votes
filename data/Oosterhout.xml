@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+
+<Uitslag type="Gemeente">
+	<Status>Eindstand</Status><DatumTijd>2012-09-13T00:14:28</DatumTijd>
+ <Title>
+  <Prefix>Gemeente</Prefix>
+  <Naam>Oosterhout</Naam>
+  <Postfix></Postfix>
+ </Title>
+ <Naam>Gemeente Oosterhout</Naam>
+ <CBS>0826</CBS>
+<KiesKring>17</KiesKring>
+ <Provincie>NB</Provincie>
+ <ProvincieNaam>Noord-Brabant</ProvincieNaam>
+ <AantalInwoners>54077</AantalInwoners>
+ <Stedelijkheid>0</Stedelijkheid>	<Groep type="Totaal">
+		<KorteNaam>Kiesger.</KorteNaam>
+		<Naam>Kiesgerechtigden</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>41461</Stemmen>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>41207</Stemmen>
+		</Verkiezing>
+	</Groep>	<Groep type="Totaal">
+		<KorteNaam>Opkomst</KorteNaam>
+		<Naam>Opkomst</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>29812</Stemmen>
+			<Perc>71,9</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>30196</Stemmen>
+			<Perc>73,3</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Totaal">
+		<KorteNaam>Ongeldig</KorteNaam>
+		<Naam>Blanco/ongeldige stemmen</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>91</Stemmen>
+			<Perc>0,3</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>64</Stemmen>
+			<Perc>0,2</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>VVD</KorteNaam>
+		<Naam>Volkspartij voor Vrijheid en Democratie</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>9137</Stemmen>
+			<Perc>30,7</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>7077</Stemmen>
+			<Perc>23,5</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>PvdA</KorteNaam>
+		<Naam>Partij van de Arbeid</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>6888</Stemmen>
+			<Perc>23,2</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>5255</Stemmen>
+			<Perc>17,4</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>PVV</KorteNaam>
+		<Naam>Partij voor de Vrijheid</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>3882</Stemmen>
+			<Perc>13,1</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>5832</Stemmen>
+			<Perc>19,4</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>CDA</KorteNaam>
+		<Naam>Christen-Democratisch Appel</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>2116</Stemmen>
+			<Perc>7,1</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>3920</Stemmen>
+			<Perc>13,0</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>SP</KorteNaam>
+		<Naam>Socialistische Partij</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>3278</Stemmen>
+			<Perc>11,0</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>3522</Stemmen>
+			<Perc>11,7</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>D66</KorteNaam>
+		<Naam>Democraten 66</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>2296</Stemmen>
+			<Perc>7,7</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>2011</Stemmen>
+			<Perc>6,7</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>GrLinks</KorteNaam>
+		<Naam>GroenLinks</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>486</Stemmen>
+			<Perc>1,6</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>1560</Stemmen>
+			<Perc>5,2</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>CU</KorteNaam>
+		<Naam>ChristenUnie</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>206</Stemmen>
+			<Perc>0,7</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>241</Stemmen>
+			<Perc>0,8</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>SGP</KorteNaam>
+		<Naam>Staatkundig Gereformeerde Partij</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>33</Stemmen>
+			<Perc>0,1</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>37</Stemmen>
+			<Perc>0,1</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>PvdD</KorteNaam>
+		<Naam>Partij voor de Dieren</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>448</Stemmen>
+			<Perc>1,5</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>311</Stemmen>
+			<Perc>1,0</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>PPNL</KorteNaam>
+		<Naam>PiratenPartij</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>75</Stemmen>
+			<Perc>0,3</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>25</Stemmen>
+			<Perc>0,1</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>MenS</KorteNaam>
+		<Naam>Partij voor Mens en Spirit</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>59</Stemmen>
+			<Perc>0,2</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>97</Stemmen>
+			<Perc>0,3</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>NL</KorteNaam>
+		<Naam>Nederland Lokaal</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>1</Stemmen>
+			<Perc>0,0</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>-</Stemmen>
+			<Perc>-</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>LP</KorteNaam>
+		<Naam>Libertarische Partij</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>8</Stemmen>
+			<Perc>0,0</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>-</Stemmen>
+			<Perc>-</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>DPK</KorteNaam>
+		<Naam>Democratisch Politiek Keerpunt</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>37</Stemmen>
+			<Perc>0,1</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>-</Stemmen>
+			<Perc>-</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>50+</KorteNaam>
+		<Naam>50PLUS</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>679</Stemmen>
+			<Perc>2,3</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>-</Stemmen>
+			<Perc>-</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>LibDem</KorteNaam>
+		<Naam>Liberaal Democratische Partij</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>2</Stemmen>
+			<Perc>0,0</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>-</Stemmen>
+			<Perc>-</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>AEP</KorteNaam>
+		<Naam>Anti Europa Partij</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>5</Stemmen>
+			<Perc>0,0</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>-</Stemmen>
+			<Perc>-</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>SOPN</KorteNaam>
+		<Naam>Soeverein Onafhankelijke Pioniers Nederland</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>63</Stemmen>
+			<Perc>0,2</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>-</Stemmen>
+			<Perc>-</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>PvdT</KorteNaam>
+		<Naam>Partij van de Toekomst</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>22</Stemmen>
+			<Perc>0,1</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>-</Stemmen>
+			<Perc>-</Perc>
+		</Verkiezing>
+	</Groep>	<Groep type="Partij">
+		<KorteNaam>Overige</KorteNaam>
+		<Naam>Overige 2010</Naam>
+		<Verkiezing code="TK12">
+			<Stemmen>-</Stemmen>
+			<Perc>-</Perc>
+		</Verkiezing>
+		<Verkiezing code="TK10">
+			<Stemmen>244</Stemmen>
+			<Perc>0,8</Perc>
+		</Verkiezing>
+	</Groep></Uitslag>
