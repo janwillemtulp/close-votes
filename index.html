@@ -1,829 +1,1118 @@
 <html>
-	<head>
-		<script src="http://d3js.org/d3.v2.js"></script>
-		<link href='http://fonts.googleapis.com/css?family=Quicksand: 400, 700' rel='stylesheet' type='text/css'>
-		<meta property="og:title" content="CLOSE VOTES - TULP interactive">
-		<meta property="og:image" content="http://tulpinteractive.com/projects/close-votes/close_votes_large.png" /> 
-		<meta property="og:description" content="Based on the 2012 parliament elections in The Netherlands, this visualization shows which cities distribute their votes similar over the political parties" />
-		<title>CLOSE VOTES - TULP interactive</title>
-		<style>
-			/*body { background-color: #DFCCA5; }*/
-			body {
-				font-family: 'Quicksand', sans-serif;
-				font-size: 11px;
-				text-align: center;
-				background: rgb(240,249,255); /* Old browsers */
-				background: -moz-radial-gradient(center, ellipse cover,  rgba(240,249,255,1) 0%, rgba(203,235,255,1) 47%, rgba(174, 218, 288,1) 100%); /* FF3.6+ */
-				background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(240,249,255,1)), color-stop(47%,rgba(203,235,255,1)), color-stop(100%,rgba(174, 218, 288,1))); /* Chrome,Safari4+ */
-				background: -webkit-radial-gradient(center, ellipse cover,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(174, 218, 288,1) 100%); /* Chrome10+,Safari5.1+ */
-				background: -o-radial-gradient(center, ellipse cover,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(174, 218, 288,1) 100%); /* Opera 12+ */
-				background: -ms-radial-gradient(center, ellipse cover,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(174, 218, 288,1) 100%); /* IE10+ */
-				background: radial-gradient(ellipse at center,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(174, 218, 288,1) 100%); /* W3C */
-				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f9ff', endColorstr='#a1dbff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-			}	
-			ul { list-style: none; padding: 0; margin: 0; display: inline-block; position: absolute; z-index: 100; right: 0px; top: 30px; }
-			select { position: absolute; right: 0px; top: 924px; }
-			a:hover { color: #F9786C; text-decoration: underline; }	
-			h1 { font-size: 32px; margin-bottom: 0;}	
-			h2 { font-size: 18px; margin-top: 0; margin-bottom: 0; }
-			h4 { margin: 0 auto; font-weight: normal; width: 500px; }
-			li { text-align: left; }
-			li span { width: 50px; display: inline-block; text-align: right; margin-right: 5px; }
-			.selected { color: #000; font-weight: bold; text-decoration: none; cursor: default; }
-			.selected:hover { text-decoration: none; color: #000; }
-			.notselected { font-weight: normal; text-decoration: underline; cursor: pointer; color: #91B6D4; }
-			.notselected:hover { color: #F9786C; }
-			#viz { width: 100%; }
-			#selectorcontainer { width: 1000px; text-align: right; margin: auto auto; position: relative; } 
-			#credit { position: absolute; top: 924px; left: 0; font-size: 9px; }
-			#credit a, #credit a:link, #credit a:active { font-weight: normal; text-decoration: none; cursor: pointer; color: #000; }
-			#credit a:hover { color: #F9786C; }
-		</style>
-	</head>
-	<body>
-		<h1>CLOSE VOTES</h1>
-		<h2>Which cities vote like yours?</h2>
-		<h4>Based on the 2012 parliament elections in The Netherlands, this visualization shows which cities distribute their votes similar over the political parties</h4>
-		<div id="selectorcontainer">
-			<ul>
-				<li><span>size:</span><a href="Javascript: void(0);" id="size_by_pop" class="notselected">population</a> / <a href="Javascript: void(0);" id="size_by_similarity" class="selected">similarity</a></li>
-				<li><span>layout:</span><a href="Javascript: void(0);" id="layout_radial" class="notselected">radial</a> / <a href="Javascript: void(0);" id="layout_geo" class="selected">geographical</a></li>
-			</ul>
-			<span id="credit">created by <a href="http://tulpinteractive.com">TULP interactive</a></span>
-			<select id="cityselector">
-			<option value="0">Aa en Hunze</option>
-			<option value="1">Aalburg</option>
-			<option value="2">Aalsmeer</option>
-			<option value="3">Aalten</option>
-			<option value="4">Achtkarspelen</option>
-			<option value="5">Alblasserdam</option>
-			<option value="6">Albrandswaard</option>
-			<option value="7">Alkmaar</option>
-			<option value="8">Almelo</option>
-			<option value="9">Almere</option>
-			<option value="10">Alphen aan den Rijn</option>
-			<option value="11">Alphen-Chaam</option>
-			<option value="12">Ameland</option>
-			<option value="13">Amersfoort</option>
-			<option value="14">Amstelveen</option>
-			<option value="15">Amsterdam</option>
-			<option value="16">Apeldoorn</option>
-			<option value="17">Appingedam</option>
-			<option value="18">Arnhem</option>
-			<option value="19">Assen</option>
-			<option value="20">Asten</option>
-			<option value="21">Baarle-Nassau</option>
-			<option value="22">Baarn</option>
-			<option value="23">Barendrecht</option>
-			<option value="24">Barneveld</option>
-			<option value="25">Bedum</option>
-			<option value="26">Beek</option>
-			<option value="27">Beemster</option>
-			<option value="28">Beesel</option>
-			<option value="29">Bellingwedde</option>
-			<option value="30">Bergambacht</option>
-			<option value="31">Bergeijk</option>
-			<option value="32">Bergen (L.)</option>
-			<option value="33">Bergen (NH.)</option>
-			<option value="34">Bergen op Zoom</option>
-			<option value="35">Berkelland</option>
-			<option value="36">Bernheze</option>
-			<option value="37">Bernisse</option>
-			<option value="38">Best</option>
-			<option value="39">Beuningen</option>
-			<option value="40">Beverwijk</option>
-			<option value="41">Binnenmaas</option>
-			<option value="42">Bladel</option>
-			<option value="43">Blaricum</option>
-			<option value="44">Bloemendaal</option>
-			<option value="45">Boarnsterhim</option>
-			<option value="46">Bodegraven-Reeuwijk</option>
-			<option value="47">Boekel</option>
-			<option value="48">Borger-Odoorn</option>
-			<option value="49">Borne</option>
-			<option value="50">Borsele</option>
-			<option value="51">Boskoop</option>
-			<option value="52">Boxmeer</option>
-			<option value="53">Boxtel</option>
-			<option value="54">Breda</option>
-			<option value="55">Brielle</option>
-			<option value="56">Bronckhorst</option>
-			<option value="57">Brummen</option>
-			<option value="58">Brunssum</option>
-			<option value="59">Bunnik</option>
-			<option value="60">Bunschoten</option>
-			<option value="61">Buren</option>
-			<option value="62">Bussum</option>
-			<option value="63">Capelle aan den IJssel</option>
-			<option value="64">Castricum</option>
-			<option value="65">Coevorden</option>
-			<option value="66">Cranendonck</option>
-			<option value="67">Cromstrijen</option>
-			<option value="68">Cuijk</option>
-			<option value="69">Culemborg</option>
-			<option value="70">Dalfsen</option>
-			<option value="71">Dantumadiel</option>
-			<option value="72">De Bilt</option>
-			<option value="73">De Marne</option>
-			<option value="74">De Ronde Venen</option>
-			<option value="75">De Wolden</option>
-			<option value="76">Delft</option>
-			<option value="77">Delfzijl</option>
-			<option value="78">Den Haag</option>
-			<option value="79">Den Helder</option>
-			<option value="80">Deurne</option>
-			<option value="81">Deventer</option>
-			<option value="82">Diemen</option>
-			<option value="83">Dinkelland</option>
-			<option value="84">Dirksland</option>
-			<option value="85">Doesburg</option>
-			<option value="86">Doetinchem</option>
-			<option value="87">Dongen</option>
-			<option value="88">Dongeradeel</option>
-			<option value="89">Dordrecht</option>
-			<option value="90">Drechterland</option>
-			<option value="91">Drimmelen</option>
-			<option value="92">Dronten</option>
-			<option value="93">Druten</option>
-			<option value="94">Duiven</option>
-			<option value="95">Echt-Susteren</option>
-			<option value="96">Edam-Volendam</option>
-			<option value="97">Ede</option>
-			<option value="98">Eemnes</option>
-			<option value="99">Eemsmond</option>
-			<option value="100">Eersel</option>
-			<option value="101">Eijsden-Margraten</option>
-			<option value="102">Eindhoven</option>
-			<option value="103">Elburg</option>
-			<option value="104">Emmen</option>
-			<option value="105">Enkhuizen</option>
-			<option value="106">Enschede</option>
-			<option value="107">Epe</option>
-			<option value="108">Ermelo</option>
-			<option value="109">Etten-Leur</option>
-			<option value="110">Ferwerderadiel</option>
-			<option value="111">Franekeradeel</option>
-			<option value="112">Gaasterlan-Sleat</option>
-			<option value="113">Geertruidenberg</option>
-			<option value="114">Geldermalsen</option>
-			<option value="115">Geldrop-Mierlo</option>
-			<option value="116">Gemert-Bakel</option>
-			<option value="117">Gennep</option>
-			<option value="118">Giessenlanden</option>
-			<option value="119">Gilze en Rijen</option>
-			<option value="120">Goedereede</option>
-			<option value="121">Goes</option>
-			<option value="122">Goirle</option>
-			<option value="123">Gorinchem</option>
-			<option value="124">Gouda</option>
-			<option value="125">Graafstroom</option>
-			<option value="126">Graft-De Rijp</option>
-			<option value="127">Grave</option>
-			<option value="128">Groesbeek</option>
-			<option value="129">Groningen</option>
-			<option value="130">Grootegast</option>
-			<option value="131">Gulpen-Wittem</option>
-			<option value="132">Haaksbergen</option>
-			<option value="133">Haaren</option>
-			<option value="134">Haarlem</option>
-			<option value="135">Haarlemmerliede en Spaarnwoude</option>
-			<option value="136">Haarlemmermeer</option>
-			<option value="137">Halderberge</option>
-			<option value="138">Hardenberg</option>
-			<option value="139">Harderwijk</option>
-			<option value="140">Hardinxveld-Giessendam</option>
-			<option value="141">Haren</option>
-			<option value="142">Harenkarspel</option>
-			<option value="143">Harlingen</option>
-			<option value="144">Hattem</option>
-			<option value="145">Heemskerk</option>
-			<option value="146">Heemstede</option>
-			<option value="147">Heerde</option>
-			<option value="148">Heerenveen</option>
-			<option value="149">Heerhugowaard</option>
-			<option value="150">Heerlen</option>
-			<option value="151">Heeze-Leende</option>
-			<option value="152">Heiloo</option>
-			<option value="153">Hellendoorn</option>
-			<option value="154">Hellevoetsluis</option>
-			<option value="155">Helmond</option>
-			<option value="156">Hendrik-Ido-Ambacht</option>
-			<option value="157">Hengelo</option>
-			<option value="158">het Bildt</option>
-			<option value="159">Heumen</option>
-			<option value="160">Heusden</option>
-			<option value="161">Hillegom</option>
-			<option value="162">Hilvarenbeek</option>
-			<option value="163">Hilversum</option>
-			<option value="164">Hof van Twente</option>
-			<option value="165">Hollands Kroon</option>
-			<option value="166">Hoogeveen</option>
-			<option value="167">Hoogezand-Sappemeer</option>
-			<option value="168">Hoorn</option>
-			<option value="169">Horst aan de Maas</option>
-			<option value="170">Houten</option>
-			<option value="171">Huizen</option>
-			<option value="172">Hulst</option>
-			<option value="173">IJsselstein</option>
-			<option value="174">Kaag en Braassem</option>
-			<option value="175">Kampen</option>
-			<option value="176">Kapelle</option>
-			<option value="177">Katwijk</option>
-			<option value="178">Kerkrade</option>
-			<option value="179">Koggenland</option>
-			<option value="180">Kollumerland c.a.</option>
-			<option value="181">Korendijk</option>
-			<option value="182">Krimpen aan den IJssel</option>
-			<option value="183">Laarbeek</option>
-			<option value="184">Landerd</option>
-			<option value="185">Landgraaf</option>
-			<option value="186">Landsmeer</option>
-			<option value="187">Langedijk</option>
-			<option value="188">Lansingerland</option>
-			<option value="189">Laren</option>
-			<option value="190">Leek</option>
-			<option value="191">Leerdam</option>
-			<option value="192">Leeuwarden</option>
-			<option value="193">Leeuwarderadeel</option>
-			<option value="194">Leiden</option>
-			<option value="195">Leiderdorp</option>
-			<option value="196">Leidschendam-Voorburg</option>
-			<option value="197">Lelystad</option>
-			<option value="198">Lemsterland</option>
-			<option value="199">Leudal</option>
-			<option value="200">Leusden</option>
-			<option value="201">Liesveld</option>
-			<option value="202">Lingewaal</option>
-			<option value="203">Lingewaard</option>
-			<option value="204">Lisse</option>
-			<option value="205">Littenseradiel</option>
-			<option value="206">Lochem</option>
-			<option value="207">Loon op Zand</option>
-			<option value="208">Lopik</option>
-			<option value="209">Loppersum</option>
-			<option value="210">Losser</option>
-			<option value="211">Maasdonk</option>
-			<option value="212">Maasdriel</option>
-			<option value="213">Maasgouw</option>
-			<option value="214">Maassluis</option>
-			<option value="215">Maastricht</option>
-			<option value="216">Marum</option>
-			<option value="217">Medemblik</option>
-			<option value="218">Meerssen</option>
-			<option value="219">Menameradiel</option>
-			<option value="220">Menterwolde</option>
-			<option value="221">Meppel</option>
-			<option value="222">Middelburg</option>
-			<option value="223">Middelharnis</option>
-			<option value="224">Midden-Delfland</option>
-			<option value="225">Midden-Drenthe</option>
-			<option value="226">Mill en Sint Hubert</option>
-			<option value="227">Millingen aan de Rijn</option>
-			<option value="228">Moerdijk</option>
-			<option value="229">Montferland</option>
-			<option value="230">Montfoort</option>
-			<option value="231">Mook en Middelaar</option>
-			<option value="232">Muiden</option>
-			<option value="233">Naarden</option>
-			<option value="234">Neder-Betuwe</option>
-			<option value="235">Nederlek</option>
-			<option value="236">Nederweert</option>
-			<option value="237">Neerijnen</option>
-			<option value="238">Nieuwegein</option>
-			<option value="239">Nieuwkoop</option>
-			<option value="240">Nieuw-Lekkerland</option>
-			<option value="241">Nijkerk</option>
-			<option value="242">Nijmegen</option>
-			<option value="243">Noord-Beveland</option>
-			<option value="244">Noordenveld</option>
-			<option value="245">Noordoostpolder</option>
-			<option value="246">Noordwijk</option>
-			<option value="247">Noordwijkerhout</option>
-			<option value="248">Nuenen a.c.</option>
-			<option value="249">Nunspeet</option>
-			<option value="250">Nuth</option>
-			<option value="251">Oegstgeest</option>
-			<option value="252">Oirschot</option>
-			<option value="253">Oisterwijk</option>
-			<option value="254">Oldambt</option>
-			<option value="255">Oldebroek</option>
-			<option value="256">Oldenzaal</option>
-			<option value="257">Olst-Wijhe</option>
-			<option value="258">Ommen</option>
-			<option value="259">Onderbanken</option>
-			<option value="260">Oost Gelre</option>
-			<option value="261">Oosterhout</option>
-			<option value="262">Oostflakkee</option>
-			<option value="263">Ooststellingwerf</option>
-			<option value="264">Oostzaan</option>
-			<option value="265">Opmeer</option>
-			<option value="266">Opsterland</option>
-			<option value="267">Oss</option>
-			<option value="268">Oud-Beijerland</option>
-			<option value="269">Oude IJsselstreek</option>
-			<option value="270">Ouder-Amstel</option>
-			<option value="271">Ouderkerk</option>
-			<option value="272">Oudewater</option>
-			<option value="273">Overbetuwe</option>
-			<option value="274">Papendrecht</option>
-			<option value="275">Peel en Maas</option>
-			<option value="276">Pekela</option>
-			<option value="277">Pijnacker-Nootdorp</option>
-			<option value="278">Purmerend</option>
-			<option value="279">Putten</option>
-			<option value="280">Raalte</option>
-			<option value="281">Reimerswaal</option>
-			<option value="282">Renkum</option>
-			<option value="283">Renswoude</option>
-			<option value="284">Reusel-De Mierden</option>
-			<option value="285">Rheden</option>
-			<option value="286">Rhenen</option>
-			<option value="287">Ridderkerk</option>
-			<option value="288">Rijnwaarden</option>
-			<option value="289">Rijnwoude</option>
-			<option value="290">Rijssen-Holten</option>
-			<option value="291">Rijswijk</option>
-			<option value="292">Roerdalen</option>
-			<option value="293">Roermond</option>
-			<option value="294">Roosendaal</option>
-			<option value="295">Rotterdam</option>
-			<option value="296">Rozendaal</option>
-			<option value="297">Rucphen</option>
-			<option value="298">Schagen</option>
-			<option value="299">Schermer</option>
-			<option value="300">Scherpenzeel</option>
-			<option value="301">Schiedam</option>
-			<option value="302">Schiermonnikoog</option>
-			<option value="303">Schijndel</option>
-			<option value="304">Schinnen</option>
-			<option value="305">Schoonhoven</option>
-			<option value="306">Schouwen-Duiveland</option>
-			<option value="307">'s-Hertogenbosch</option>
-			<option value="308">Simpelveld</option>
-			<option value="309">Sint Anthonis</option>
-			<option value="310">Sint-Michielsgestel</option>
-			<option value="311">Sint-Oedenrode</option>
-			<option value="312">Sittard-Geleen</option>
-			<option value="313">Skarsterlan</option>
-			<option value="314">Sliedrecht</option>
-			<option value="315">Slochteren</option>
-			<option value="316">Sluis</option>
-			<option value="317">Smallingerland</option>
-			<option value="318">Soest</option>
-			<option value="319">Someren</option>
-			<option value="320">Son en Breugel</option>
-			<option value="321">Spijkenisse</option>
-			<option value="322">Stadskanaal</option>
-			<option value="323">Staphorst</option>
-			<option value="324">Stede Broec</option>
-			<option value="325">Steenbergen</option>
-			<option value="326">Steenwijkerland</option>
-			<option value="327">Stein</option>
-			<option value="328">Stichtse Vecht</option>
-			<option value="329">Strijen</option>
-			<option value="330">Sudwest Fryslan</option>
-			<option value="331">Ten Boer</option>
-			<option value="332">Terneuzen</option>
-			<option value="333">Terschelling</option>
-			<option value="334">Texel</option>
-			<option value="335">Teylingen</option>
-			<option value="336">Tholen</option>
-			<option value="337">Tiel</option>
-			<option value="338">Tilburg</option>
-			<option value="339">Tubbergen</option>
-			<option value="340">Twenterand</option>
-			<option value="341">Tynaarlo</option>
-			<option value="342">Tytsjerksteradiel</option>
-			<option value="343">Ubbergen</option>
-			<option value="344">Uden</option>
-			<option value="345">Uitgeest</option>
-			<option value="346">Uithoorn</option>
-			<option value="347">Urk</option>
-			<option value="348">Utrecht</option>
-			<option value="349">Utrechtse Heuvelrug</option>
-			<option value="350">Vaals</option>
-			<option value="351">Valkenburg aan de Geul</option>
-			<option value="352">Valkenswaard</option>
-			<option value="353">Veendam</option>
-			<option value="354">Veenendaal</option>
-			<option value="355">Veere</option>
-			<option value="356">Veghel</option>
-			<option value="357">Veldhoven</option>
-			<option value="358">Velsen</option>
-			<option value="359">Venlo</option>
-			<option value="360">Venray</option>
-			<option value="361">Vianen</option>
-			<option value="362">Vlaardingen</option>
-			<option value="363">Vlagtwedde</option>
-			<option value="364">Vlieland</option>
-			<option value="365">Vlissingen</option>
-			<option value="366">Vlist</option>
-			<option value="367">Voerendaal</option>
-			<option value="368">Voorschoten</option>
-			<option value="369">Voorst</option>
-			<option value="370">Vught</option>
-			<option value="371">Waalre</option>
-			<option value="372">Waalwijk</option>
-			<option value="373">Waddinxveen</option>
-			<option value="374">Wageningen</option>
-			<option value="375">Wassenaar</option>
-			<option value="376">Waterland</option>
-			<option value="377">Weert</option>
-			<option value="378">Weesp</option>
-			<option value="379">Werkendam</option>
-			<option value="380">West Maas en Waal</option>
-			<option value="381">Westerveld</option>
-			<option value="382">Westervoort</option>
-			<option value="383">Westland</option>
-			<option value="384">Weststellingwerf</option>
-			<option value="385">Westvoorne</option>
-			<option value="386">Wierden</option>
-			<option value="387">Wijchen</option>
-			<option value="388">Wijdemeren</option>
-			<option value="389">Wijk bij Duurstede</option>
-			<option value="390">Winsum</option>
-			<option value="391">Winterswijk</option>
-			<option value="392">Woensdrecht</option>
-			<option value="393">Woerden</option>
-			<option value="394">Wormerland</option>
-			<option value="395">Woudenberg</option>
-			<option value="396">Woudrichem</option>
-			<option value="397">Zaanstad</option>
-			<option value="398">Zaltbommel</option>
-			<option value="399">Zandvoort</option>
-			<option value="400">Zederik</option>
-			<option value="401">Zeevang</option>
-			<option value="402">Zeewolde</option>
-			<option value="403">Zeist</option>
-			<option value="404">Zevenaar</option>
-			<option value="405">Zijpe</option>
-			<option value="406">Zoetermeer</option>
-			<option value="407">Zoeterwoude</option>
-			<option value="408">Zuidhorn</option>
-			<option value="409">Zuidplas</option>
-			<option value="410">Zundert</option>
-			<option value="411">Zutphen</option>
-			<option value="412">Zwartewaterland</option>
-			<option value="413">Zwijndrecht</option>
-			<option value="414">Zwolle</option>
-		</select>
-		</div>		
-		<div id="viz"></div>
-		<script type="text/javascript">
+  <head>
+    <script src="https://d3js.org/d3.v2.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css?family=Quicksand: 400, 700"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <meta property="og:title" content="CLOSE VOTES - TULP interactive" />
+    <meta
+      property="og:image"
+      content="https://tulpinteractive.com/projects/close-votes/close_votes_large.png"
+    />
+    <meta
+      property="og:description"
+      content="Based on the 2012 parliament elections in The Netherlands, this visualization shows which cities distribute their votes similar over the political parties"
+    />
+    <title>CLOSE VOTES - TULP interactive</title>
+    <style>
+      /*body { background-color: #DFCCA5; }*/
+      body {
+        font-family: "Quicksand", sans-serif;
+        font-size: 11px;
+        text-align: center;
+        background: rgb(240, 249, 255); /* Old browsers */
+        background: -moz-radial-gradient(
+          center,
+          ellipse cover,
+          rgba(240, 249, 255, 1) 0%,
+          rgba(203, 235, 255, 1) 47%,
+          rgba(174, 218, 288, 1) 100%
+        ); /* FF3.6+ */
+        background: -webkit-gradient(
+          radial,
+          center center,
+          0px,
+          center center,
+          100%,
+          color-stop(0%, rgba(240, 249, 255, 1)),
+          color-stop(47%, rgba(203, 235, 255, 1)),
+          color-stop(100%, rgba(174, 218, 288, 1))
+        ); /* Chrome,Safari4+ */
+        background: -webkit-radial-gradient(
+          center,
+          ellipse cover,
+          rgba(240, 249, 255, 1) 0%,
+          rgba(203, 235, 255, 1) 47%,
+          rgba(174, 218, 288, 1) 100%
+        ); /* Chrome10+,Safari5.1+ */
+        background: -o-radial-gradient(
+          center,
+          ellipse cover,
+          rgba(240, 249, 255, 1) 0%,
+          rgba(203, 235, 255, 1) 47%,
+          rgba(174, 218, 288, 1) 100%
+        ); /* Opera 12+ */
+        background: -ms-radial-gradient(
+          center,
+          ellipse cover,
+          rgba(240, 249, 255, 1) 0%,
+          rgba(203, 235, 255, 1) 47%,
+          rgba(174, 218, 288, 1) 100%
+        ); /* IE10+ */
+        background: radial-gradient(
+          ellipse at center,
+          rgba(240, 249, 255, 1) 0%,
+          rgba(203, 235, 255, 1) 47%,
+          rgba(174, 218, 288, 1) 100%
+        ); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f9ff', endColorstr='#a1dbff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: inline-block;
+        position: absolute;
+        z-index: 100;
+        right: 0px;
+        top: 30px;
+      }
+      select {
+        position: absolute;
+        right: 0px;
+        top: 924px;
+      }
+      a:hover {
+        color: #f9786c;
+        text-decoration: underline;
+      }
+      h1 {
+        font-size: 32px;
+        margin-bottom: 0;
+      }
+      h2 {
+        font-size: 18px;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      h4 {
+        margin: 0 auto;
+        font-weight: normal;
+        width: 500px;
+      }
+      li {
+        text-align: left;
+      }
+      li span {
+        width: 50px;
+        display: inline-block;
+        text-align: right;
+        margin-right: 5px;
+      }
+      .selected {
+        color: #000;
+        font-weight: bold;
+        text-decoration: none;
+        cursor: default;
+      }
+      .selected:hover {
+        text-decoration: none;
+        color: #000;
+      }
+      .notselected {
+        font-weight: normal;
+        text-decoration: underline;
+        cursor: pointer;
+        color: #91b6d4;
+      }
+      .notselected:hover {
+        color: #f9786c;
+      }
+      #viz {
+        width: 100%;
+      }
+      #selectorcontainer {
+        width: 1000px;
+        text-align: right;
+        margin: auto auto;
+        position: relative;
+      }
+      #credit {
+        position: absolute;
+        top: 924px;
+        left: 0;
+        font-size: 9px;
+      }
+      #credit a,
+      #credit a:link,
+      #credit a:active {
+        font-weight: normal;
+        text-decoration: none;
+        cursor: pointer;
+        color: #000;
+      }
+      #credit a:hover {
+        color: #f9786c;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>CLOSE VOTES</h1>
+    <h2>Which cities vote like yours?</h2>
+    <h4>
+      Based on the 2012 parliament elections in The Netherlands, this
+      visualization shows which cities distribute their votes similar over the
+      political parties
+    </h4>
+    <div id="selectorcontainer">
+      <ul>
+        <li>
+          <span>size:</span
+          ><a href="Javascript: void(0);" id="size_by_pop" class="notselected"
+            >population</a
+          >
+          /
+          <a
+            href="Javascript: void(0);"
+            id="size_by_similarity"
+            class="selected"
+            >similarity</a
+          >
+        </li>
+        <li>
+          <span>layout:</span
+          ><a href="Javascript: void(0);" id="layout_radial" class="notselected"
+            >radial</a
+          >
+          /
+          <a href="Javascript: void(0);" id="layout_geo" class="selected"
+            >geographical</a
+          >
+        </li>
+      </ul>
+      <span id="credit"
+        >created by
+        <a href="https://tulpinteractive.com">TULP interactive</a></span
+      >
+      <select id="cityselector">
+        <option value="0">Aa en Hunze</option>
+        <option value="1">Aalburg</option>
+        <option value="2">Aalsmeer</option>
+        <option value="3">Aalten</option>
+        <option value="4">Achtkarspelen</option>
+        <option value="5">Alblasserdam</option>
+        <option value="6">Albrandswaard</option>
+        <option value="7">Alkmaar</option>
+        <option value="8">Almelo</option>
+        <option value="9">Almere</option>
+        <option value="10">Alphen aan den Rijn</option>
+        <option value="11">Alphen-Chaam</option>
+        <option value="12">Ameland</option>
+        <option value="13">Amersfoort</option>
+        <option value="14">Amstelveen</option>
+        <option value="15">Amsterdam</option>
+        <option value="16">Apeldoorn</option>
+        <option value="17">Appingedam</option>
+        <option value="18">Arnhem</option>
+        <option value="19">Assen</option>
+        <option value="20">Asten</option>
+        <option value="21">Baarle-Nassau</option>
+        <option value="22">Baarn</option>
+        <option value="23">Barendrecht</option>
+        <option value="24">Barneveld</option>
+        <option value="25">Bedum</option>
+        <option value="26">Beek</option>
+        <option value="27">Beemster</option>
+        <option value="28">Beesel</option>
+        <option value="29">Bellingwedde</option>
+        <option value="30">Bergambacht</option>
+        <option value="31">Bergeijk</option>
+        <option value="32">Bergen (L.)</option>
+        <option value="33">Bergen (NH.)</option>
+        <option value="34">Bergen op Zoom</option>
+        <option value="35">Berkelland</option>
+        <option value="36">Bernheze</option>
+        <option value="37">Bernisse</option>
+        <option value="38">Best</option>
+        <option value="39">Beuningen</option>
+        <option value="40">Beverwijk</option>
+        <option value="41">Binnenmaas</option>
+        <option value="42">Bladel</option>
+        <option value="43">Blaricum</option>
+        <option value="44">Bloemendaal</option>
+        <option value="45">Boarnsterhim</option>
+        <option value="46">Bodegraven-Reeuwijk</option>
+        <option value="47">Boekel</option>
+        <option value="48">Borger-Odoorn</option>
+        <option value="49">Borne</option>
+        <option value="50">Borsele</option>
+        <option value="51">Boskoop</option>
+        <option value="52">Boxmeer</option>
+        <option value="53">Boxtel</option>
+        <option value="54">Breda</option>
+        <option value="55">Brielle</option>
+        <option value="56">Bronckhorst</option>
+        <option value="57">Brummen</option>
+        <option value="58">Brunssum</option>
+        <option value="59">Bunnik</option>
+        <option value="60">Bunschoten</option>
+        <option value="61">Buren</option>
+        <option value="62">Bussum</option>
+        <option value="63">Capelle aan den IJssel</option>
+        <option value="64">Castricum</option>
+        <option value="65">Coevorden</option>
+        <option value="66">Cranendonck</option>
+        <option value="67">Cromstrijen</option>
+        <option value="68">Cuijk</option>
+        <option value="69">Culemborg</option>
+        <option value="70">Dalfsen</option>
+        <option value="71">Dantumadiel</option>
+        <option value="72">De Bilt</option>
+        <option value="73">De Marne</option>
+        <option value="74">De Ronde Venen</option>
+        <option value="75">De Wolden</option>
+        <option value="76">Delft</option>
+        <option value="77">Delfzijl</option>
+        <option value="78">Den Haag</option>
+        <option value="79">Den Helder</option>
+        <option value="80">Deurne</option>
+        <option value="81">Deventer</option>
+        <option value="82">Diemen</option>
+        <option value="83">Dinkelland</option>
+        <option value="84">Dirksland</option>
+        <option value="85">Doesburg</option>
+        <option value="86">Doetinchem</option>
+        <option value="87">Dongen</option>
+        <option value="88">Dongeradeel</option>
+        <option value="89">Dordrecht</option>
+        <option value="90">Drechterland</option>
+        <option value="91">Drimmelen</option>
+        <option value="92">Dronten</option>
+        <option value="93">Druten</option>
+        <option value="94">Duiven</option>
+        <option value="95">Echt-Susteren</option>
+        <option value="96">Edam-Volendam</option>
+        <option value="97">Ede</option>
+        <option value="98">Eemnes</option>
+        <option value="99">Eemsmond</option>
+        <option value="100">Eersel</option>
+        <option value="101">Eijsden-Margraten</option>
+        <option value="102">Eindhoven</option>
+        <option value="103">Elburg</option>
+        <option value="104">Emmen</option>
+        <option value="105">Enkhuizen</option>
+        <option value="106">Enschede</option>
+        <option value="107">Epe</option>
+        <option value="108">Ermelo</option>
+        <option value="109">Etten-Leur</option>
+        <option value="110">Ferwerderadiel</option>
+        <option value="111">Franekeradeel</option>
+        <option value="112">Gaasterlan-Sleat</option>
+        <option value="113">Geertruidenberg</option>
+        <option value="114">Geldermalsen</option>
+        <option value="115">Geldrop-Mierlo</option>
+        <option value="116">Gemert-Bakel</option>
+        <option value="117">Gennep</option>
+        <option value="118">Giessenlanden</option>
+        <option value="119">Gilze en Rijen</option>
+        <option value="120">Goedereede</option>
+        <option value="121">Goes</option>
+        <option value="122">Goirle</option>
+        <option value="123">Gorinchem</option>
+        <option value="124">Gouda</option>
+        <option value="125">Graafstroom</option>
+        <option value="126">Graft-De Rijp</option>
+        <option value="127">Grave</option>
+        <option value="128">Groesbeek</option>
+        <option value="129">Groningen</option>
+        <option value="130">Grootegast</option>
+        <option value="131">Gulpen-Wittem</option>
+        <option value="132">Haaksbergen</option>
+        <option value="133">Haaren</option>
+        <option value="134">Haarlem</option>
+        <option value="135">Haarlemmerliede en Spaarnwoude</option>
+        <option value="136">Haarlemmermeer</option>
+        <option value="137">Halderberge</option>
+        <option value="138">Hardenberg</option>
+        <option value="139">Harderwijk</option>
+        <option value="140">Hardinxveld-Giessendam</option>
+        <option value="141">Haren</option>
+        <option value="142">Harenkarspel</option>
+        <option value="143">Harlingen</option>
+        <option value="144">Hattem</option>
+        <option value="145">Heemskerk</option>
+        <option value="146">Heemstede</option>
+        <option value="147">Heerde</option>
+        <option value="148">Heerenveen</option>
+        <option value="149">Heerhugowaard</option>
+        <option value="150">Heerlen</option>
+        <option value="151">Heeze-Leende</option>
+        <option value="152">Heiloo</option>
+        <option value="153">Hellendoorn</option>
+        <option value="154">Hellevoetsluis</option>
+        <option value="155">Helmond</option>
+        <option value="156">Hendrik-Ido-Ambacht</option>
+        <option value="157">Hengelo</option>
+        <option value="158">het Bildt</option>
+        <option value="159">Heumen</option>
+        <option value="160">Heusden</option>
+        <option value="161">Hillegom</option>
+        <option value="162">Hilvarenbeek</option>
+        <option value="163">Hilversum</option>
+        <option value="164">Hof van Twente</option>
+        <option value="165">Hollands Kroon</option>
+        <option value="166">Hoogeveen</option>
+        <option value="167">Hoogezand-Sappemeer</option>
+        <option value="168">Hoorn</option>
+        <option value="169">Horst aan de Maas</option>
+        <option value="170">Houten</option>
+        <option value="171">Huizen</option>
+        <option value="172">Hulst</option>
+        <option value="173">IJsselstein</option>
+        <option value="174">Kaag en Braassem</option>
+        <option value="175">Kampen</option>
+        <option value="176">Kapelle</option>
+        <option value="177">Katwijk</option>
+        <option value="178">Kerkrade</option>
+        <option value="179">Koggenland</option>
+        <option value="180">Kollumerland c.a.</option>
+        <option value="181">Korendijk</option>
+        <option value="182">Krimpen aan den IJssel</option>
+        <option value="183">Laarbeek</option>
+        <option value="184">Landerd</option>
+        <option value="185">Landgraaf</option>
+        <option value="186">Landsmeer</option>
+        <option value="187">Langedijk</option>
+        <option value="188">Lansingerland</option>
+        <option value="189">Laren</option>
+        <option value="190">Leek</option>
+        <option value="191">Leerdam</option>
+        <option value="192">Leeuwarden</option>
+        <option value="193">Leeuwarderadeel</option>
+        <option value="194">Leiden</option>
+        <option value="195">Leiderdorp</option>
+        <option value="196">Leidschendam-Voorburg</option>
+        <option value="197">Lelystad</option>
+        <option value="198">Lemsterland</option>
+        <option value="199">Leudal</option>
+        <option value="200">Leusden</option>
+        <option value="201">Liesveld</option>
+        <option value="202">Lingewaal</option>
+        <option value="203">Lingewaard</option>
+        <option value="204">Lisse</option>
+        <option value="205">Littenseradiel</option>
+        <option value="206">Lochem</option>
+        <option value="207">Loon op Zand</option>
+        <option value="208">Lopik</option>
+        <option value="209">Loppersum</option>
+        <option value="210">Losser</option>
+        <option value="211">Maasdonk</option>
+        <option value="212">Maasdriel</option>
+        <option value="213">Maasgouw</option>
+        <option value="214">Maassluis</option>
+        <option value="215">Maastricht</option>
+        <option value="216">Marum</option>
+        <option value="217">Medemblik</option>
+        <option value="218">Meerssen</option>
+        <option value="219">Menameradiel</option>
+        <option value="220">Menterwolde</option>
+        <option value="221">Meppel</option>
+        <option value="222">Middelburg</option>
+        <option value="223">Middelharnis</option>
+        <option value="224">Midden-Delfland</option>
+        <option value="225">Midden-Drenthe</option>
+        <option value="226">Mill en Sint Hubert</option>
+        <option value="227">Millingen aan de Rijn</option>
+        <option value="228">Moerdijk</option>
+        <option value="229">Montferland</option>
+        <option value="230">Montfoort</option>
+        <option value="231">Mook en Middelaar</option>
+        <option value="232">Muiden</option>
+        <option value="233">Naarden</option>
+        <option value="234">Neder-Betuwe</option>
+        <option value="235">Nederlek</option>
+        <option value="236">Nederweert</option>
+        <option value="237">Neerijnen</option>
+        <option value="238">Nieuwegein</option>
+        <option value="239">Nieuwkoop</option>
+        <option value="240">Nieuw-Lekkerland</option>
+        <option value="241">Nijkerk</option>
+        <option value="242">Nijmegen</option>
+        <option value="243">Noord-Beveland</option>
+        <option value="244">Noordenveld</option>
+        <option value="245">Noordoostpolder</option>
+        <option value="246">Noordwijk</option>
+        <option value="247">Noordwijkerhout</option>
+        <option value="248">Nuenen a.c.</option>
+        <option value="249">Nunspeet</option>
+        <option value="250">Nuth</option>
+        <option value="251">Oegstgeest</option>
+        <option value="252">Oirschot</option>
+        <option value="253">Oisterwijk</option>
+        <option value="254">Oldambt</option>
+        <option value="255">Oldebroek</option>
+        <option value="256">Oldenzaal</option>
+        <option value="257">Olst-Wijhe</option>
+        <option value="258">Ommen</option>
+        <option value="259">Onderbanken</option>
+        <option value="260">Oost Gelre</option>
+        <option value="261">Oosterhout</option>
+        <option value="262">Oostflakkee</option>
+        <option value="263">Ooststellingwerf</option>
+        <option value="264">Oostzaan</option>
+        <option value="265">Opmeer</option>
+        <option value="266">Opsterland</option>
+        <option value="267">Oss</option>
+        <option value="268">Oud-Beijerland</option>
+        <option value="269">Oude IJsselstreek</option>
+        <option value="270">Ouder-Amstel</option>
+        <option value="271">Ouderkerk</option>
+        <option value="272">Oudewater</option>
+        <option value="273">Overbetuwe</option>
+        <option value="274">Papendrecht</option>
+        <option value="275">Peel en Maas</option>
+        <option value="276">Pekela</option>
+        <option value="277">Pijnacker-Nootdorp</option>
+        <option value="278">Purmerend</option>
+        <option value="279">Putten</option>
+        <option value="280">Raalte</option>
+        <option value="281">Reimerswaal</option>
+        <option value="282">Renkum</option>
+        <option value="283">Renswoude</option>
+        <option value="284">Reusel-De Mierden</option>
+        <option value="285">Rheden</option>
+        <option value="286">Rhenen</option>
+        <option value="287">Ridderkerk</option>
+        <option value="288">Rijnwaarden</option>
+        <option value="289">Rijnwoude</option>
+        <option value="290">Rijssen-Holten</option>
+        <option value="291">Rijswijk</option>
+        <option value="292">Roerdalen</option>
+        <option value="293">Roermond</option>
+        <option value="294">Roosendaal</option>
+        <option value="295">Rotterdam</option>
+        <option value="296">Rozendaal</option>
+        <option value="297">Rucphen</option>
+        <option value="298">Schagen</option>
+        <option value="299">Schermer</option>
+        <option value="300">Scherpenzeel</option>
+        <option value="301">Schiedam</option>
+        <option value="302">Schiermonnikoog</option>
+        <option value="303">Schijndel</option>
+        <option value="304">Schinnen</option>
+        <option value="305">Schoonhoven</option>
+        <option value="306">Schouwen-Duiveland</option>
+        <option value="307">'s-Hertogenbosch</option>
+        <option value="308">Simpelveld</option>
+        <option value="309">Sint Anthonis</option>
+        <option value="310">Sint-Michielsgestel</option>
+        <option value="311">Sint-Oedenrode</option>
+        <option value="312">Sittard-Geleen</option>
+        <option value="313">Skarsterlan</option>
+        <option value="314">Sliedrecht</option>
+        <option value="315">Slochteren</option>
+        <option value="316">Sluis</option>
+        <option value="317">Smallingerland</option>
+        <option value="318">Soest</option>
+        <option value="319">Someren</option>
+        <option value="320">Son en Breugel</option>
+        <option value="321">Spijkenisse</option>
+        <option value="322">Stadskanaal</option>
+        <option value="323">Staphorst</option>
+        <option value="324">Stede Broec</option>
+        <option value="325">Steenbergen</option>
+        <option value="326">Steenwijkerland</option>
+        <option value="327">Stein</option>
+        <option value="328">Stichtse Vecht</option>
+        <option value="329">Strijen</option>
+        <option value="330">Sudwest Fryslan</option>
+        <option value="331">Ten Boer</option>
+        <option value="332">Terneuzen</option>
+        <option value="333">Terschelling</option>
+        <option value="334">Texel</option>
+        <option value="335">Teylingen</option>
+        <option value="336">Tholen</option>
+        <option value="337">Tiel</option>
+        <option value="338">Tilburg</option>
+        <option value="339">Tubbergen</option>
+        <option value="340">Twenterand</option>
+        <option value="341">Tynaarlo</option>
+        <option value="342">Tytsjerksteradiel</option>
+        <option value="343">Ubbergen</option>
+        <option value="344">Uden</option>
+        <option value="345">Uitgeest</option>
+        <option value="346">Uithoorn</option>
+        <option value="347">Urk</option>
+        <option value="348">Utrecht</option>
+        <option value="349">Utrechtse Heuvelrug</option>
+        <option value="350">Vaals</option>
+        <option value="351">Valkenburg aan de Geul</option>
+        <option value="352">Valkenswaard</option>
+        <option value="353">Veendam</option>
+        <option value="354">Veenendaal</option>
+        <option value="355">Veere</option>
+        <option value="356">Veghel</option>
+        <option value="357">Veldhoven</option>
+        <option value="358">Velsen</option>
+        <option value="359">Venlo</option>
+        <option value="360">Venray</option>
+        <option value="361">Vianen</option>
+        <option value="362">Vlaardingen</option>
+        <option value="363">Vlagtwedde</option>
+        <option value="364">Vlieland</option>
+        <option value="365">Vlissingen</option>
+        <option value="366">Vlist</option>
+        <option value="367">Voerendaal</option>
+        <option value="368">Voorschoten</option>
+        <option value="369">Voorst</option>
+        <option value="370">Vught</option>
+        <option value="371">Waalre</option>
+        <option value="372">Waalwijk</option>
+        <option value="373">Waddinxveen</option>
+        <option value="374">Wageningen</option>
+        <option value="375">Wassenaar</option>
+        <option value="376">Waterland</option>
+        <option value="377">Weert</option>
+        <option value="378">Weesp</option>
+        <option value="379">Werkendam</option>
+        <option value="380">West Maas en Waal</option>
+        <option value="381">Westerveld</option>
+        <option value="382">Westervoort</option>
+        <option value="383">Westland</option>
+        <option value="384">Weststellingwerf</option>
+        <option value="385">Westvoorne</option>
+        <option value="386">Wierden</option>
+        <option value="387">Wijchen</option>
+        <option value="388">Wijdemeren</option>
+        <option value="389">Wijk bij Duurstede</option>
+        <option value="390">Winsum</option>
+        <option value="391">Winterswijk</option>
+        <option value="392">Woensdrecht</option>
+        <option value="393">Woerden</option>
+        <option value="394">Wormerland</option>
+        <option value="395">Woudenberg</option>
+        <option value="396">Woudrichem</option>
+        <option value="397">Zaanstad</option>
+        <option value="398">Zaltbommel</option>
+        <option value="399">Zandvoort</option>
+        <option value="400">Zederik</option>
+        <option value="401">Zeevang</option>
+        <option value="402">Zeewolde</option>
+        <option value="403">Zeist</option>
+        <option value="404">Zevenaar</option>
+        <option value="405">Zijpe</option>
+        <option value="406">Zoetermeer</option>
+        <option value="407">Zoeterwoude</option>
+        <option value="408">Zuidhorn</option>
+        <option value="409">Zuidplas</option>
+        <option value="410">Zundert</option>
+        <option value="411">Zutphen</option>
+        <option value="412">Zwartewaterland</option>
+        <option value="413">Zwijndrecht</option>
+        <option value="414">Zwolle</option>
+      </select>
+    </div>
+    <div id="viz"></div>
+    <script type="text/javascript">
+      d3.json("uitslagen.json", function (json) {
+        var data = json;
 
+        var index = Math.round(Math.random() * data.length),
+          w = 1000,
+          h = 1000;
 
-d3.json("uitslagen.json", function(json) {
-	var data = json;
+        d3.select("#cityselector").property("selectedIndex", index);
+        //27861
+        var rl = d3.scale
+          .linear()
+          .domain([0, 75])
+          .range([0, w / 2 - 60]);
+        var rs = d3.scale
+          .log()
+          .domain([1, 74])
+          .range([0, w / 2 - 60]);
+        var rr = d3.scale
+          .linear()
+          .domain([
+            Math.sqrt(1 / Math.PI),
+            Math.sqrt(15 / Math.PI),
+            Math.sqrt(74 / Math.PI),
+          ])
+          .range([22, 5, 2]);
+        //var rr = d3.scale.linear().domain([Math.sqrt(1 / Math.PI), Math.sqrt(74 / Math.PI)]).range([22, 2])
 
-	var index = Math.round(Math.random() * data.length),
-	w = 1000, 
-	h = 1000;
+        var rinw = d3.scale
+          .linear()
+          .domain(
+            d3.extent(data, function (x) {
+              return Math.sqrt(x.inw / Math.PI);
+            })
+          )
+          .range([2, 40]);
+        var ro = d3.scale
+          .linear()
+          .domain(
+            d3.extent(data, function (x) {
+              return x.opk;
+            })
+          )
+          .range([2, 70]);
+        var c = d3.scale
+          .log()
+          .domain([1, 20, 74])
+          .range(["#F9786C", "#41415F", "#193244"]);
 
-	d3.select("#cityselector").property("selectedIndex", index);
-//27861
-	var rl = d3.scale.linear().domain([0, 75]).range([0, w / 2 - 60]);
-	var rs = d3.scale.log().domain([1, 74]).range([0, w / 2 - 60]);
-	var rr = d3.scale.linear().domain([Math.sqrt(1 / Math.PI), Math.sqrt(15 / Math.PI), Math.sqrt(74 / Math.PI)]).range([22, 5, 2]);
-	//var rr = d3.scale.linear().domain([Math.sqrt(1 / Math.PI), Math.sqrt(74 / Math.PI)]).range([22, 2])
-	
-	var rinw = d3.scale.linear().domain(d3.extent(data, function(x) { return Math.sqrt(x.inw / Math.PI); })).range([2, 40])
-	var ro = d3.scale.linear().domain(d3.extent(data, function(x) { return x.opk; })).range([2, 70])
-	var c = d3.scale.log().domain([1, 20, 74]).range(["#F9786C", "#41415F", "#193244"]);
+        var axes = [
+          { label: "very similar", value: 15 },
+          { label: "similar", value: 30 },
+          { label: "different", value: 45 },
+          { label: "very different", value: 60 },
+          { label: "extremely different", value: 75 },
+        ];
 
-	var axes = [
-		{ 'label': 'very similar', 'value': 15 },
-		{ 'label': 'similar', 'value': 30 },
-		{ 'label': 'different', 'value': 45 },
-		{ 'label': 'very different', 'value': 60 },
-		{ 'label': 'extremely different', 'value': 75} 
-	];
+        var rfuncs = [
+          function (d, i) {
+            return rinw(Math.sqrt(d.inw / Math.PI));
+          }, // population
+          function (d, i) {
+            return rr(
+              Math.sqrt(d["chi"][index] / Math.PI) == 0
+                ? 1
+                : Math.sqrt(d["chi"][index] / Math.PI)
+            );
+          }, // similarity
+          function (d, i) {
+            return ro(d.opk);
+          }, // show up
+        ];
 
-	var rfuncs = [
-		function(d, i) { return rinw(Math.sqrt(d.inw / Math.PI)); }, // population
-		function(d, i) { return rr(Math.sqrt(d['chi'][index] / Math.PI) == 0 ? 1 : Math.sqrt(d['chi'][index] / Math.PI)); }, // similarity
-		function(d, i) { return ro(d.opk); } // show up
-	]
+        var rfunc = rfuncs[1];
+        var layout = "geo";
+        var size = "sim";
 
-	var rfunc = rfuncs[1];
-	var layout = "geo";
-	var size = "sim";
+        var svg = d3
+          .select("#viz")
+          .append("svg")
+          .attr("width", w)
+          .attr("height", h);
 
-	var svg = d3.select("#viz").append("svg")
-		.attr("width", w)
-		.attr("height", h)
+        var merc = d3.geo.mercator();
+        merc.translate([-986, 11195]);
+        merc.scale(65668);
 
-	var merc = d3.geo.mercator();
-	merc.translate([-986, 11195]);
-	merc.scale(65668);
+        var selectedCity = svg
+          .append("text")
+          .attr("id", "selectedcity")
+          .attr("x", 54)
+          .attr("y", 30)
+          .text(data[index]["gem"])
+          .style("fill", "#000")
+          .style("text-anchor", "start")
+          .style("font-family", "Quicksand")
+          .style("font-size", "24px");
 
-	var selectedCity = svg.append("text")
-		.attr("id", "selectedcity")
-		.attr("x", 54)
-		.attr("y", 30)
-		.text(data[index]["gem"])
-		.style("fill", "#000")
-		.style("text-anchor", "start")
-		.style("font-family", "Quicksand")
-		.style("font-size", "24px")
+        var selectors = svg
+          .append("foreignObject")
+          .attr("transform", "translate(200, 200)")
+          .append("body")
+          .append("ul");
 
-	var selectors = svg.append("foreignObject")
-		.attr("transform", "translate(200, 200)")
-		.append("body")
-		.append("ul")
+        selectors.append("li");
+        selectors.append("li");
 
-	selectors.append("li")
-	selectors.append("li")
+        var g = svg
+          .append("g")
+          .attr("transform", "translate(" + w / 2 + ", " + h / 2 + ")");
 
-	var g = svg.append('g')
-		.attr('transform', 'translate(' + w / 2 + ', ' + h / 2 + ')')
+        var arc = d3.svg
+          .arc()
+          .outerRadius(function (d) {
+            return rl(d.value);
+          })
+          .startAngle(0)
+          .endAngle(2 * Math.PI);
 
-	var arc = d3.svg.arc()
-		.outerRadius(function(d) { return rl(d.value); })
-		.startAngle(0)
-		.endAngle(2 * Math.PI)
+        var ga = g.append("g").attr("id", "axisgroup").style("opacity", 0);
 
-	var ga = g.append("g")
-		.attr("id", "axisgroup")
-		.style("opacity", 0)
+        ga.selectAll(".axispath")
+          .data(axes)
+          .enter()
+          .append("path")
+          .attr("id", function (d, i) {
+            return "axispath" + i;
+          })
+          .attr("class", "axispath")
+          .attr("d", arc)
+          .style("stroke", "#91B6D4")
+          .style("fill", "none")
+          .style("opacity", 0.6);
 
-	ga.selectAll(".axispath")
-	  	.data(axes)
-	  	  .enter().append("path")
-	  	.attr("id", function(d, i) { return "axispath" + i; })
-	  	.attr("class", "axispath")
-	  	.attr("d", arc)
-	  	.style("stroke", "#91B6D4")
-	  	.style("fill", "none")
-	  	.style("opacity", 0.6)
+        ga.selectAll(".axislabel")
+          .data(axes)
+          .enter()
+          .append("text")
+          .attr("class", "axislabel")
+          .attr("dy", -5)
+          .attr("dx", 0)
+          .style("fill", "#91B6D4")
+          .style("font-size", "11px")
+          .style("text-anchor", "middle")
+          .append("textPath")
+          .attr("xlink:href", function (d, i) {
+            return "#axispath" + i;
+          })
+          .attr("startOffset", "40%")
+          .text(function (d, i) {
+            return d.label;
+          });
 
-	ga.selectAll(".axislabel")
-		.data(axes)
-		  .enter().append("text")
-		.attr("class", "axislabel")
-		.attr("dy", -5)
-		.attr("dx", 0)
-		.style("fill", "#91B6D4")
-		.style("font-size", "11px")
-		.style("text-anchor", "middle")
-	  .append("textPath")
-	  	.attr("xlink:href", function(d, i) { return "#axispath" + i; })
-	  	.attr("startOffset", "40%")
-		.text(function(d, i) { return d.label; }) 
+        d3.selection.prototype.moveToFront = function () {
+          return this.each(function () {
+            this.parentNode.appendChild(this);
+          });
+        };
 
-	d3.selection.prototype.moveToFront = function() { 
-	    return this.each(function() { 
-	        this.parentNode.appendChild(this); 
-	    }); 
-	}; 
+        data.forEach(function (d, i) {
+          d.s = i;
+        });
 
-	data.forEach(function(d, i) {
-		d.s = i;
-	})
+        d3.select("#cityselector").on("change", function (d) {
+          index = this.value;
+          update();
+        });
 
-	d3.select("#cityselector")
-		.on("change", function(d) {
-			index = this.value;
-			update();
-		})
+        d3.select("#size_by_pop").on("click", function () {
+          rfunc = rfuncs[0];
+          circle.each(function (d, i) {
+            d3.select(this).transition().duration(800).attr("r", rfunc);
+          });
 
-	d3.select("#size_by_pop")
-		.on("click", function() {
-			rfunc = rfuncs[0];
-			circle.each(function(d, i) {
-				d3.select(this)
-					.transition()
-					.duration(800)
-					.attr('r', rfunc)
-			})
+          d3.select(this).attr("class", "selected");
 
-			d3.select(this)
-				.attr("class", "selected")
+          d3.select("#size_by_similarity").attr("class", "notselected");
 
-			d3.select("#size_by_similarity")
-				.attr("class", "notselected")
+          size = "pop";
+        });
 
-			size = "pop";
-		})
+        d3.select("#size_by_similarity").on("click", function () {
+          rfunc = rfuncs[1];
+          circle.each(function (d, i) {
+            d3.select(this).transition().duration(800).attr("r", rfunc);
+          });
 
-	d3.select("#size_by_similarity")
-		.on("click", function() {
-			rfunc = rfuncs[1];
-			circle.each(function(d, i) {
-				d3.select(this)
-					.transition()
-					.duration(800)
-					.attr('r', rfunc)
-			})
+          d3.select(this).attr("class", "selected");
 
-			d3.select(this)
-				.attr("class", "selected")
+          d3.select("#size_by_pop").attr("class", "notselected");
 
-			d3.select("#size_by_pop")
-				.attr("class", "notselected")
+          size = "sim";
+        });
 
-			size = "sim";
-		})
+        d3.select("#layout_radial").on("click", function () {
+          layout = "radial";
 
-	d3.select("#layout_radial")
-		.on("click", function() {
-			layout = "radial";
+          d3.selectAll(".city")
+            .transition()
+            .duration(1300)
+            .attr("cy", 0)
+            .attr("cx", function (d, i) {
+              return rs(d["chi"][index] == 0 ? 1 : d["chi"][index]);
+            })
+            .attr("transform", function (d, i) {
+              return "rotate(" + (d.s / data.length) * 360 + " 0 0)";
+            });
 
-			d3.selectAll(".city")
-				.transition()
-				.duration(1300)
-				.attr("cy", 0)
-  				.attr("cx", function(d, i) { return rs(d['chi'][index] == 0 ? 1 : d['chi'][index])})
-  				.attr("transform", function(d, i) { return "rotate(" + d.s/data.length * 360 + " 0 0)"; })
+          d3.selectAll("#axisgroup")
+            .transition()
+            .duration(1300)
+            .style("opacity", 1);
 
-			d3.selectAll("#axisgroup")
-  				.transition()
-  				.duration(1300)
-  				.style("opacity", 1)
+          d3.select(this).attr("class", "selected");
 
-  			d3.select(this)
-				.attr("class", "selected")
+          d3.select("#layout_geo").attr("class", "notselected");
+        });
 
-			d3.select("#layout_geo")
-				.attr("class", "notselected")
-		})
+        d3.select("#layout_geo").on("click", function () {
+          layout = "geo";
 
-	d3.select("#layout_geo")
-		.on("click", function() {
-			layout = "geo";
+          d3.selectAll(".city")
+            .transition()
+            .duration(1300)
+            .attr("cy", function (d) {
+              return merc([d["geo"][1], d["geo"][0]])[1];
+            })
+            .attr("cx", function (d) {
+              return merc([d["geo"][1], d["geo"][0]])[0];
+            })
+            .attr("transform", function (d, i) {
+              return "rotate(0 0 0)";
+            });
 
-			d3.selectAll(".city")
-				.transition()
-				.duration(1300)
-				.attr('cy', function(d) { return merc([d['geo'][1], d['geo'][0]])[1]; })
-  				.attr('cx', function(d) { return merc([d['geo'][1], d['geo'][0]])[0]; })
-  				.attr("transform", function(d, i) { return "rotate(0 0 0)"; })
+          d3.selectAll("#axisgroup")
+            .transition()
+            .duration(1300)
+            .style("opacity", 0);
 
-  			d3.selectAll("#axisgroup")
-  				.transition()
-  				.duration(1300)
-  				.style("opacity", 0)
+          d3.select(this).attr("class", "selected");
 
-  			d3.select(this)
-				.attr("class", "selected")
+          d3.select("#layout_radial").attr("class", "notselected");
+        });
 
-			d3.select("#layout_radial")
-				.attr("class", "notselected")
-		})
+        function update() {
+          if (layout == "radial") {
+            d3.selectAll(".city")
+              .transition()
+              .duration(800)
+              .attr("cx", function (d, i) {
+                return rs(d["chi"][index] == 0 ? 1 : d["chi"][index]);
+              })
+              .attr("r", rfunc)
+              .style("fill", function (d, i) {
+                return index == d.s
+                  ? "#F9786C"
+                  : c(d["chi"][index] == 0 ? 1 : d["chi"][index]);
+              });
+          } else {
+            d3.selectAll(".city")
+              .transition()
+              .duration(800)
+              .attr("r", rfunc)
+              .style("fill", function (d, i) {
+                return index == d.s
+                  ? "#F9786C"
+                  : c(d["chi"][index] == 0 ? 1 : d["chi"][index]);
+              });
+          }
 
-  function update() {
-  	if (layout == "radial") {
-        	d3.selectAll('.city')
-	          .transition()
-	          .duration(800)
-	          .attr("cx", function(d, i) { return rs(d['chi'][index] == 0 ? 1 : d['chi'][index])})
-	          .attr('r', rfunc)
-	          .style('fill', function(d, i) { return index == d.s ? "#F9786C" : c(d['chi'][index] == 0 ? 1 : d['chi'][index]); })	
-        } else {
-        	d3.selectAll('.city')
-	          .transition()
-	          .duration(800)
-	          .attr('r', rfunc)
-	          .style('fill', function(d, i) { return index == d.s ? "#F9786C" : c(d['chi'][index] == 0 ? 1 : d['chi'][index]); })
+          d3.selectAll(".label").remove();
+
+          d3.select("#selectedcity").text(data[index]["gem"]);
+
+          bar
+            .data(data[index]["stm"])
+            .transition()
+            .duration(800)
+            .attr("width", function (d) {
+              return bs(d);
+            });
         }
 
-        d3.selectAll(".label")
-        	.remove();
+        var circle = g
+          .selectAll(".city")
+          .data(data)
+          .enter()
+          .append("circle")
+          .attr("class", "city")
+          .attr("r", rfunc)
+          .attr("cy", function (d) {
+            return merc([d["geo"][1], d["geo"][0]])[1];
+          })
+          .attr("cx", function (d) {
+            return merc([d["geo"][1], d["geo"][0]])[0];
+          })
+          .style("fill", function (d, i) {
+            return index == d.s
+              ? "#F9786C"
+              : c(d["chi"][index] == 0 ? 1 : d["chi"][index]);
+          })
+          .style("stroke", "white")
+          .style("stroke-opacity", 0.3)
+          .style("opacity", 0.9)
+          .on("click", function (d, ind) {
+            d3.selectAll(".city").each(function (d, ind) {
+              if (d.s == index) {
+                d3.select(this).moveToFront();
+              }
+            });
 
-        d3.select("#selectedcity")
-        	.text(data[index]["gem"])
-        
-        bar
-        	.data(data[index]['stm'])
-        	.transition()
-        	.duration(800)
-        	.attr("width", function(d) { return bs(d); })
-  }		
+            index = ind;
 
-  var circle = g.selectAll('.city')
-  	.data(data)
-  .enter().append('circle')
-    .attr('class', 'city')
-  	.attr('r', rfunc)
-  	.attr('cy', function(d) { return merc([d['geo'][1], d['geo'][0]])[1]; })
-  	.attr('cx', function(d) { return merc([d['geo'][1], d['geo'][0]])[0]; })
-  	.style('fill', function(d, i) { return index == d.s ? "#F9786C" : c(d['chi'][index] == 0 ? 1 : d['chi'][index]); })
-  	.style('stroke', 'white')
-  	.style('stroke-opacity', 0.3)
-  	.style("opacity", 0.9)
-    .on("click", function(d, ind) {
-    	d3.selectAll('.city').each(function(d, ind) {
-        	if (d.s == index) {
-				d3.select(this)
-        			.moveToFront()
-        	}
-        })
+            d3.select("#cityselector").property("selectedIndex", index);
 
-        index = ind;
-        
-        d3.select("#cityselector").property("selectedIndex", index);
+            update();
+          })
+          .on("mouseover", function (d, i) {
+            var labelbackground = d3
+              .select(this.parentNode)
+              .append("text")
+              .attr("class", "label")
+              .style("text-anchor", "middle")
+              .text(function () {
+                return d.gem;
+              })
+              .style("font-family", "'Quicksand', sans-serif")
+              .style("font-size", "16px")
+              .style("font-weight", "bold")
+              .style("stroke", "rgb(240,249,255)")
+              .style("stroke-width", 3.5)
+              .style("stroke-opacity", 0.6)
+              .style("filter", "url:(#dropshadow)")
+              .attr("dy", function () {
+                return size == "pop"
+                  ? -1 * rinw(Math.sqrt(d.inw / Math.PI)) - 5
+                  : -1 *
+                      rr(
+                        Math.sqrt(d["chi"][index] / Math.PI) == 0
+                          ? 1
+                          : Math.sqrt(d["chi"][index] / Math.PI)
+                      ) -
+                      5;
+              })
+              .style("fill", "none");
 
-        update();
+            var labelforeground = d3
+              .select(this.parentNode)
+              .append("text")
+              .attr("class", "label")
+              .style("text-anchor", "middle")
+              .text(function () {
+                return d.gem;
+              })
+              .style("font-family", "'Quicksand', sans-serif")
+              .style("font-size", "16px")
+              .style("font-weight", "bold")
+              .attr("dy", function () {
+                return size == "pop"
+                  ? -1 * rinw(Math.sqrt(d.inw / Math.PI)) - 5
+                  : -1 *
+                      rr(
+                        Math.sqrt(d["chi"][index] / Math.PI) == 0
+                          ? 1
+                          : Math.sqrt(d["chi"][index] / Math.PI)
+                      ) -
+                      5;
+              })
+              .style("fill", "#000");
 
-      })
-	.on("mouseover", function(d, i) {
+            if (layout == "geo") {
+              labelbackground
+                .attr("y", function () {
+                  return merc([d["geo"][1], d["geo"][0]])[1];
+                })
+                .attr("x", function () {
+                  return merc([d["geo"][1], d["geo"][0]])[0];
+                });
 
-		var labelbackground = d3.select(this.parentNode)
-			.append('text')
-			.attr('class', 'label')
-			.style('text-anchor', 'middle')
-			.text(function() { return d.gem; })
-			.style('font-family', "'Quicksand', sans-serif")
-			.style('font-size', '16px')
-			.style('font-weight', 'bold')
-			.style('stroke', 'rgb(240,249,255)')
-			.style('stroke-width', 3.5)
-			.style('stroke-opacity', 0.6)
-			.style('filter', 'url:(#dropshadow)')
-			.attr('dy', function() { return size == "pop" ? -1 * rinw(Math.sqrt(d.inw / Math.PI)) - 5 : -1 * rr(Math.sqrt(d['chi'][index] / Math.PI) == 0 ? 1 : Math.sqrt(d['chi'][index] / Math.PI)) - 5; })
-			.style('fill', 'none')
+              labelforeground
+                .attr("y", function () {
+                  return merc([d["geo"][1], d["geo"][0]])[1];
+                })
+                .attr("x", function () {
+                  return merc([d["geo"][1], d["geo"][0]])[0];
+                });
+            } else {
+              labelbackground
+                .attr("x", function () {
+                  return index == i
+                    ? 0
+                    : Math.cos((d.s / data.length) * 2 * Math.PI) *
+                        rs(d["chi"][index] == 0 ? 1 : d["chi"][index]);
+                })
+                .attr("y", function () {
+                  return index == i
+                    ? 0
+                    : Math.sin((d.s / data.length) * 2 * Math.PI) *
+                        rs(d["chi"][index] == 0 ? 1 : d["chi"][index]);
+                });
 
-		var labelforeground = d3.select(this.parentNode)
-			.append('text')
-			.attr('class', 'label')
-			.style('text-anchor', 'middle')
-			.text(function() { return d.gem; })
-			.style('font-family', "'Quicksand', sans-serif")
-			.style('font-size', '16px')
-			.style('font-weight', 'bold')
-			.attr('dy', function() { return size == "pop" ? -1 * rinw(Math.sqrt(d.inw / Math.PI)) - 5 : -1 * rr(Math.sqrt(d['chi'][index] / Math.PI) == 0 ? 1 : Math.sqrt(d['chi'][index] / Math.PI)) - 5; })
-			.style('fill', '#000')
+              labelforeground
+                .attr("x", function () {
+                  return index == i
+                    ? 0
+                    : Math.cos((d.s / data.length) * 2 * Math.PI) *
+                        rs(d["chi"][index] == 0 ? 1 : d["chi"][index]);
+                })
+                .attr("y", function () {
+                  return index == i
+                    ? 0
+                    : Math.sin((d.s / data.length) * 2 * Math.PI) *
+                        rs(d["chi"][index] == 0 ? 1 : d["chi"][index]);
+                });
+            }
 
-		if (layout == "geo") {
-			labelbackground
-				.attr('y', function() { return merc([d['geo'][1], d['geo'][0]])[1]; })
-  				.attr('x', function() { return merc([d['geo'][1], d['geo'][0]])[0]; })
+            bg.selectAll(".marker")
+              .data(data[d.s]["stm"])
+              .enter()
+              .append("line")
+              .attr("class", "marker")
+              .attr("x1", function (d) {
+                return 5 + bs(d);
+              })
+              .attr("y1", function (d, i) {
+                return i * 11;
+              })
+              .attr("x2", function (d) {
+                return 5 + bs(d);
+              })
+              .attr("y2", function (d, i) {
+                return 10 + i * 11;
+              })
+              .style("stroke", "#000")
+              .style("opacity", 0.8);
+          })
+          .on("mouseout", function (d, i) {
+            d3.selectAll(".label").remove();
 
-  			labelforeground
-				.attr('y', function() { return merc([d['geo'][1], d['geo'][0]])[1]; })
-  				.attr('x', function() { return merc([d['geo'][1], d['geo'][0]])[0]; })
-		} else {
-			labelbackground
-				.attr('x', function() { return index == i ? 0 : Math.cos(d.s/data.length * 2 * Math.PI) * rs(d['chi'][index] == 0 ? 1 : d['chi'][index]); })
-				.attr('y', function() { return index == i ? 0 : Math.sin(d.s/data.length * 2 * Math.PI) * rs(d['chi'][index] == 0 ? 1 : d['chi'][index]); })
+            d3.selectAll(".marker").remove();
+          });
 
-			labelforeground
-				.attr('x', function() { return index == i ? 0 : Math.cos(d.s/data.length * 2 * Math.PI) * rs(d['chi'][index] == 0 ? 1 : d['chi'][index]); })
-				.attr('y', function() { return index == i ? 0 : Math.sin(d.s/data.length * 2 * Math.PI) * rs(d['chi'][index] == 0 ? 1 : d['chi'][index]); })
-		}
+        var bs = d3.scale.linear().domain([0, 100]).range([0, 200]);
 
-		bg.selectAll(".marker")
-			.data(data[d.s]["stm"])
-			.enter().append("line")
-			.attr("class", "marker")
-			.attr("x1", function(d) { return 5 + bs(d); })
-			.attr("y1", function(d, i) { return i * 11; })
-			.attr("x2", function(d) { return 5 + bs(d); })
-			.attr("y2", function(d, i) { return 10 + i * 11; })
-			.style("stroke", "#000")
-			.style("opacity", 0.8)
-	})
-	.on("mouseout", function(d, i) {
-		d3.selectAll('.label')
-			.remove()
+        var bg = svg.append("g").attr("transform", "translate(50, 50)");
 
-		d3.selectAll(".marker")
-			.remove()
-	});
+        var party = bg
+          .selectAll(".party")
+          .data([
+            "VVD",
+            "PvdA",
+            "PVV",
+            "SP",
+            "CDA",
+            "D66",
+            "CU",
+            "GrLinks",
+            "SGP",
+            "PvdD",
+            "50+",
+          ])
+          .enter()
+          .append("text")
+          .attr("class", "party")
+          .attr("x", 0)
+          .attr("y", function (d, i) {
+            return 8 + i * 11;
+          })
+          .text(String)
+          .style("text-anchor", "end")
+          .style("fill", "#91B6D4");
 
-	var bs = d3.scale.linear().domain([0, 100]).range([0, 200]);
-
-	var bg = svg.append("g")
-		.attr("transform", "translate(50, 50)")
-
-	var party = bg.selectAll(".party")
-		.data(["VVD", "PvdA", "PVV", "SP", "CDA", "D66", "CU", "GrLinks", "SGP", "PvdD", "50+"])
-		.enter().append("text")
-		.attr("class", "party")
-		.attr("x", 0)
-		.attr("y", function(d, i) { return 8 + i * 11; })
-		.text(String)
-		.style("text-anchor", "end")
-		.style("fill", "#91B6D4")
-
-	var bar = bg.selectAll("rect")
-		.data(data[index]["stm"])
-		.enter().append("rect")
-		.attr("x", 5)
-		.attr("y", function(d, i) { return i * 11; })
-		.attr("height", 10)
-		.attr("width", function(d) { return bs(d); })
-		.style("fill", "#91B6D4")
-
-
-
-});    
-
-		</script>
-		<script>
-		  var _gaq=[['_setAccount','UA-27449759-1'],['_trackPageview']];
-		  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-		  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-		  s.parentNode.insertBefore(g,s)}(document,'script'));
-		</script>
-	</body>
+        var bar = bg
+          .selectAll("rect")
+          .data(data[index]["stm"])
+          .enter()
+          .append("rect")
+          .attr("x", 5)
+          .attr("y", function (d, i) {
+            return i * 11;
+          })
+          .attr("height", 10)
+          .attr("width", function (d) {
+            return bs(d);
+          })
+          .style("fill", "#91B6D4");
+      });
+    </script>
+    <script>
+      var _gaq = [["_setAccount", "UA-27449759-1"], ["_trackPageview"]];
+      (function (d, t) {
+        var g = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+        g.src =
+          ("https:" == location.protocol ? "//ssl" : "//www") +
+          ".google-analytics.com/ga.js";
+        s.parentNode.insertBefore(g, s);
+      })(document, "script");
+    </script>
+  </body>
 </html>
